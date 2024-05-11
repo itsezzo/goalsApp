@@ -1,33 +1,65 @@
+import { useState } from "react";
+import { StyleSheet, Button, View, FlatList } from "react-native";
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/GoalInput";
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
+let i = 0;
 export default function App() {
+  const [goalsList, setGoalsList] = useState([]);
+  const [modelIsVisible, setModelIsVisible] = useState(false);
+
+  function handleGoalAdded(enteredGoal) {
+    i++;
+    setGoalsList(prevList => [...prevList, {text: enteredGoal, key: i}]);
+    setModelIsVisible(false);
+  };
+
+  function hadleDeleting(id) {
+    setGoalsList(prevList => {
+      return prevList.filter(goal => goal.key !== id);
+    })
+  }
+
+  function handleModelVisiablity() {
+    i++;
+    setModelIsVisible(true);
+  }
+
+  
   return (
-    <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.textInput} placeholder="Your Goal is..!!"/>
-        <Button title="Add Goal"/>
+    <>
+      <StatusBar style="light" />
+      <View style={styles.appContainer}>
+        <Button title="Add New Goal!" color='#5e0acc' onPress={handleModelVisiablity}/>
+        <GoalInput buttonPress={handleGoalAdded} isVisible={modelIsVisible} onCanceling={() => setModelIsVisible(false)}/>
+        <View style={styles.goalsContainer}>
+          <FlatList data={goalsList} renderItem={itemData => {
+            return(
+              <GoalItem text={itemData.item.text} onDelete={hadleDeleting} id={itemData.item.key} />
+            );
+          }} 
+          // keyExtractor={(item, inedx) => // here takes two parameter u could use one return item.key // or item.id}
+          />
+          {/* <ScrollView>
+            {goalsList.map((item, indx) => (
+            <View style={styles.gaolItem} key={indx}>
+              <Text style={styles.goalText}>{item}</Text>
+            </View>))}
+          </ScrollView> */}
+        </View>
       </View>
-      <View>
-        <Text>List of Goals...</Text>
-      </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   appContainer: {
-    padding: 50,
+    flex: 1,
+    paddingTop: 50,
+    paddingHorizontal: 20,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  goalsContainer: {
+    flex: 6
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    width: '80%',
-    marginRight: 5,
-    padding: 5,
-  }
 });
