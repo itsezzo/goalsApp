@@ -6,12 +6,12 @@
 
     a small app gets an input, setting it as a goal.
 
-## contents:
+## Contents:
 
   - `One screen.`
   - `2 components`
 
-## libraries:
+## Libraries:
 
   - `expo`
   - `react`
